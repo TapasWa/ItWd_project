@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music Maker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <div class="controls">
+      <button id="add-track">➕ Add Track</button>
+      <button id="play-all">▶️ Play All</button>
+      <button id="stop-all">⏹️ Stop All</button>
+      <button id="download-song">💾 Download Song</button>
+      <button id="record-vocals">🎤 Record Vocals</button>
+      <button id="clear-all">🗑️ Clear All</button>
+      <div class="tempo-control">
+        <label for="bpm-slider">🎵 BPM:</label>
+        <input type="range" id="bpm-slider" min="60" max="200" value="120" step="1">
+        <span id="bpm-display">120</span>
+      </div>
+    </div>
+    <div class="timeline-container">
+      <div class="timeline-ruler"></div>
+      <div class="playback-position"></div>
+    </div>
+    <div class="main">
+      <div class="track-list"></div>
+      <div class="instrument-palette">
+        <h3>🎵 Instruments</h3>
+        
+        <div class="instrument-category">
+          <div class="category-title">🥁 Drums</div>
+          <div class="instruments">
+            <div class="instrument" draggable="true" data-name="kick" data-category="drums">Kick</div>
+            <div class="instrument" draggable="true" data-name="snare" data-category="drums">Snare</div>
+            <div class="instrument" draggable="true" data-name="hihat" data-category="drums">Hi-Hat</div>
+            <div class="instrument" draggable="true" data-name="crash" data-category="drums">Crash</div>
+            <div class="instrument" draggable="true" data-name="ride" data-category="drums">Ride</div>
+            <div class="instrument" draggable="true" data-name="tom" data-category="drums">Tom</div>
+          </div>
+        </div>
+
+        <div class="instrument-category">
+          <div class="category-title">🎸 Bass</div>
+          <div class="instruments">
+            <div class="instrument" draggable="true" data-name="bass1" data-category="bass">Bass 1</div>
+            <div class="instrument" draggable="true" data-name="bass2" data-category="bass">Bass 2</div>
+            <div class="instrument" draggable="true" data-name="subbass" data-category="bass">Sub Bass</div>
+            <div class="instrument" draggable="true" data-name="synthbass" data-category="bass">Synth Bass</div>
+          </div>
+        </div>
+
+        <div class="instrument-category">
+          <div class="category-title">🎹 Synths</div>
+          <div class="instruments">
+            <div class="instrument" draggable="true" data-name="lead" data-category="synths">Lead</div>
+            <div class="instrument" draggable="true" data-name="pad" data-category="synths">Pad</div>
+            <div class="instrument" draggable="true" data-name="pluck" data-category="synths">Pluck</div>
+            <div class="instrument" draggable="true" data-name="arp" data-category="synths">Arp</div>
+          </div>
+        </div>
+
+        <div class="instrument-category">
+          <div class="category-title">🎺 Other</div>
+          <div class="instruments">
+            <div class="instrument" draggable="true" data-name="vocal" data-category="other">Vocal</div>
+            <div class="instrument" draggable="true" data-name="fx" data-category="other">FX</div>
+          </div>
+        </div>
+
+        <div class="keyboard-shortcuts">
+          <h4>⌨️ Keyboard Shortcuts</h4>
+          <ul>
+            <li><strong>Space:</strong> Play/Stop</li>
+            <li><strong>T:</strong> Add Track</li>
+            <li><strong>Del:</strong> Delete Selected</li>
+            <li><strong>↑/↓:</strong> Select Track</li>
+            <li><strong>←/→:</strong> Change BPM</li>
+            <li><strong>R:</strong> Record</li>
+            <li><strong>S:</strong> Save/Download</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

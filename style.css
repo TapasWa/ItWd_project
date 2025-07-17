@@ -1,0 +1,576 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#app { 
+  padding: 20px; 
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.controls button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 25px;
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.controls button:hover {
+  background: rgba(255,255,255,0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.controls button:active {
+  transform: translateY(0);
+}
+
+.main {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.track-list {
+  flex: 1;
+  min-width: 300px;
+  overflow-y: auto;
+  max-height: 70vh;
+}
+
+.track {
+  position: relative;
+  height: 80px;
+  margin-bottom: 15px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+  border: 2px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  overflow: visible;
+}
+
+.track:hover {
+  border-color: rgba(255,255,255,0.3);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.track-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 10px 10px 0 0;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.track-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.track .volume-control {
+  width: 80px;
+}
+
+.delete-track {
+  background: rgba(255,0,0,0.3);
+  border: none;
+  color: #fff;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.delete-track:hover {
+  background: rgba(255,0,0,0.5);
+}
+
+.loop-toggle {
+  background: rgba(0,255,0,0.3);
+  border: none;
+  color: #fff;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.loop-toggle.active {
+  background: rgba(0,255,0,0.6);
+}
+
+.tempo-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0,0,0,0.2);
+  padding: 8px 12px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.tempo-control label {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+#bpm-slider {
+  width: 100px;
+}
+
+#bpm-display {
+  font-weight: bold;
+  min-width: 30px;
+  text-align: center;
+  background: rgba(255,255,255,0.2);
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+/* Timeline Container */
+.timeline-container {
+  position: relative;
+  height: 30px;
+  margin-bottom: 10px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.timeline-ruler {
+  height: 100%;
+  position: relative;
+  background: linear-gradient(to right, 
+    transparent 0%, 
+    rgba(255,255,255,0.1) 25%, 
+    transparent 25%, 
+    transparent 50%, 
+    rgba(255,255,255,0.1) 75%, 
+    transparent 75%);
+  background-size: 100px 100%;
+}
+
+.timeline-ruler::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(to right, 
+    #FF6B6B 0%, 
+    #4ECDC4 25%, 
+    #45B7D1 50%, 
+    #96CEB4 75%, 
+    #FFEAA7 100%);
+}
+
+/* Timeline markers */
+.timeline-ruler::after {
+  content: attr(data-markers);
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 10px;
+  color: rgba(255,255,255,0.7);
+  white-space: pre;
+  letter-spacing: var(--marker-spacing, 80px);
+}
+
+.playback-position {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background: #FFD700;
+  box-shadow: 0 0 10px #FFD700;
+  transform: translateX(-1px);
+  transition: left 0.1s linear;
+  z-index: 10;
+}
+
+.playback-position::before {
+  content: '▼';
+  position: absolute;
+  top: -8px;
+  left: -6px;
+  color: #FFD700;
+  font-size: 12px;
+  text-shadow: 0 0 5px #FFD700;
+}
+
+.sample-event {
+  position: absolute;
+  top: 30px;
+  height: 40px;
+  padding: 8px;
+  background: linear-gradient(45deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
+  border-radius: 6px;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.2);
+  cursor: move;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.sample-event:hover {
+  background: linear-gradient(45deg, rgba(255,255,255,0.4), rgba(255,255,255,0.3));
+  transform: scale(1.05);
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.sample-event.dragging {
+  opacity: 0.8;
+  transform: scale(1.1);
+  z-index: 1000;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+.sample-event .drag-handle {
+  position: absolute;
+  left: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 24px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  cursor: move;
+  z-index: 100;
+}
+
+.sample-event .drag-handle::before {
+  content: '⋮⋮';
+  line-height: 0.8;
+  color: rgba(0,0,0,0.7);
+}
+
+.sample-event .delete-sample {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: rgba(255,0,0,0.8);
+  border: none;
+  color: #fff;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
+  cursor: pointer;
+  display: none;
+  z-index: 200;
+  pointer-events: auto;
+}
+
+.sample-event .delete-sample:hover {
+  background: rgba(255,0,0,1);
+  transform: scale(1.2);
+}
+
+.sample-event:hover .delete-sample {
+  display: block;
+}
+
+/* Prevent dragging when interacting with controls */
+.sample-event .sample-volume,
+.sample-event .delete-sample {
+  pointer-events: auto;
+}
+
+.sample-volume {
+  position: absolute;
+  bottom: 2px;
+  right: 20px;
+  width: 50px;
+  height: 14px;
+  opacity: 0.9;
+  z-index: 200;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.sample-volume:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.sample-volume:focus {
+  outline: 2px solid #FFD700;
+  outline-offset: 1px;
+}
+
+/* Instrument Palette */
+.instruments {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.instrument {
+  padding: 12px 10px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.15));
+  border-radius: 10px;
+  cursor: grab;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  backdrop-filter: blur(5px);
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.instrument::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.instrument:hover::before {
+  left: 100%;
+}
+
+.instrument:hover {
+  background: linear-gradient(135deg, rgba(255,255,255,0.35), rgba(255,255,255,0.25));
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  border-color: rgba(255,255,255,0.4);
+}
+
+.instrument:active {
+  cursor: grabbing;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+/* Individual Track Play Button */
+.play-track {
+  background: rgba(0,255,0,0.3);
+  border: none;
+  color: #fff;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s ease;
+}
+
+.play-track:hover {
+  background: rgba(0,255,0,0.5);
+  transform: scale(1.1);
+}
+
+.play-track.playing {
+  background: rgba(255,165,0,0.6);
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Touch-friendly controls for mobile */
+@media (max-width: 768px) {
+  .sample-volume {
+    width: 60px !important;
+    height: 16px !important;
+    bottom: 4px !important;
+  }
+  
+  .delete-sample {
+    width: 22px !important;
+    height: 22px !important;
+    font-size: 14px !important;
+    top: -6px !important;
+    right: -6px !important;
+  }
+  
+  .sample-event .drag-handle {
+    width: 14px !important;
+    height: 28px !important;
+  }
+  
+  .track-controls button {
+    padding: 6px 10px;
+    font-size: 16px;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .instrument, .sample-event, .track {
+    border-width: 0.5px;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  #app {
+    padding: 10px;
+  }
+  
+  .main {
+    flex-direction: column;
+  }
+  
+  .instrument-palette {
+    width: 100%;
+    max-height: 300px;
+    order: -1;
+  }
+  
+  .instruments {
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  }
+  
+  .controls {
+    justify-content: center;
+  }
+  
+  .controls button {
+    padding: 10px 16px;
+    font-size: 12px;
+  }
+  
+  .track {
+    height: 70px;
+  }
+  
+  .track-header {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+  
+  .sample-event {
+    height: 35px;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .controls button {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+  
+  .track {
+    height: 60px;
+  }
+  
+  .sample-event {
+    height: 30px;
+    font-size: 9px;
+  }
+  
+  .instrument-palette {
+    padding: 10px;
+  }
+  
+  .instruments {
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    gap: 6px;
+  }
+  
+  .instrument {
+    padding: 8px 6px;
+    font-size: 11px;
+  }
+}
+
+/* Animation for new elements */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.track, .sample-event {
+  animation: fadeInUp 0.3s ease;
+}
+
+/* Loading states */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid transparent;
+  border-top: 2px solid #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.sample-content {
+  pointer-events: none;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
